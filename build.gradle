@@ -1,0 +1,59 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.maiflai:gradle-scalatest:0.10"
+    }
+}
+
+apply plugin: "scala"
+apply plugin: "com.github.maiflai.scalatest"
+apply plugin: "maven"
+apply plugin: "java"
+
+group = group
+version = "${sparkVersion}.${influxVersion}.${version}"
+
+targetCompatibility = "1.7"
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    itestCompile.extendsFrom testCompile
+    itestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    itest {
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+
+        scala.srcDir file('src/itest/scala')
+    }
+
+    test {
+        resources.srcDir file('src/itest/resources')
+    }
+}
+
+task itest(type: Test) {
+    testClassesDir = sourceSets.itest.output.classesDir
+    classpath = sourceSets.itest.runtimeClasspath
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+dependencies {
+    compile "org.scala-lang:scala-library:$scalaVersion.6"
+
+    testCompile "org.scalatest:scalatest_$scalaVersion:2.2.5"
+    testCompile "org.mockito:mockito-all:1.10.19"
+    testCompile "junit:junit:4.12"
+}
