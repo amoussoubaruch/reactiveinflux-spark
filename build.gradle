@@ -15,12 +15,13 @@ apply plugin: "maven"
 apply plugin: "java"
 
 group = group
-version = "${sparkVersion}.${influxVersion}.${version}"
+version = "${sparkVersion}.${reactiveinfluxVersion}.${version}"
 
 targetCompatibility = "1.7"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 configurations {
@@ -51,7 +52,15 @@ task itest(type: Test) {
 }
 
 dependencies {
+    def sparkVersionFull = ""
+    if (sparkVersion == "1.4") {
+        sparkVersionFull = "1.4.1"
+    }
+
     compile "org.scala-lang:scala-library:$scalaVersion.6"
+    compile "org.apache.spark:spark-core_$scalaVersion:$sparkVersionFull"
+    compile "org.apache.spark:spark-streaming_$scalaVersion:$sparkVersionFull"
+    compile "com.pygmalios:reactiveinflux_$scalaVersion:$reactiveinfluxVersion"
 
     testCompile "org.scalatest:scalatest_$scalaVersion:2.2.5"
     testCompile "org.mockito:mockito-all:1.10.19"
