@@ -1,18 +1,15 @@
 package com.pygmalios.reactiveinflux.spark
 
 import com.pygmalios.reactiveinflux.ReactiveInflux
+import com.pygmalios.reactiveinflux.command.write.PointNoTime
+import com.pygmalios.reactiveinflux.spark.extensions.PointNoTimeRDDExtensions
 import org.apache.spark.rdd.RDD
 
-trait RDDExtensions[+T] {
+trait RDDExtensions {
   def saveToInflux()(implicit reactiveInflux: ReactiveInflux)
 }
 
 object RDDExtensions {
-  def apply[T](rdd: RDD[T]): RDDExtensions[T] = {
-    ??? // TODO
-  }
-}
-
-private class RDDExtensionsImpl[+T] extends RDDExtensions[T] {
-  override def saveToInflux()(implicit reactiveInflux: ReactiveInflux): Unit = ???
+  def apply[T <: PointNoTime](rdd: RDD[T]): RDDExtensions =
+    new PointNoTimeRDDExtensions(rdd)
 }
