@@ -14,9 +14,9 @@ import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 import scala.concurrent.duration._
 
 @RunWith(classOf[JUnitRunner])
-class PointNoTimeRDDExtensionsSpec extends FlatSpec with SharedSparkContext
+class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
   with BeforeAndAfterAll with Influx {
-  import PointNoTimeRDDExtensionsSpec._
+  import PointRDDExtensionsSpec._
 
   private val syncReactiveInflux = SyncReactiveInflux()
   override implicit val params = ReactiveInfluxDbParams(dbName = "test")
@@ -56,7 +56,7 @@ class PointNoTimeRDDExtensionsSpec extends FlatSpec with SharedSparkContext
   }
 }
 
-object PointNoTimeRDDExtensionsSpec {
+object PointRDDExtensionsSpec {
   val measurement1: Measurement = "measurement1"
   val point1 = Point(
     time        = new DateTime(1983, 1, 10, 7, 43, 10, 3, DateTimeZone.UTC),
