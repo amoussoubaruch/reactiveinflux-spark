@@ -6,29 +6,25 @@ import com.pygmalios.reactiveinflux.command.query.Query
 import com.pygmalios.reactiveinflux.command.write.Point.Measurement
 import com.pygmalios.reactiveinflux.command.write.{BigDecimalFieldValue, Point, StringFieldValue}
 import com.pygmalios.reactiveinflux.spark._
-import com.pygmalios.reactiveinflux.sync.SyncReactiveInflux
 import org.joda.time.{DateTime, DateTimeZone}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
+
 import scala.concurrent.duration._
+import PointRDDExtensionsSpec._
 
 @RunWith(classOf[JUnitRunner])
 class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
-  with BeforeAndAfterAll with Influx {
-  import PointRDDExtensionsSpec._
-
-  private val syncReactiveInflux = SyncReactiveInflux()
-  override implicit val params = ReactiveInfluxDbParams(dbName = "test")
-  implicit val awaitAtMost = 1.second
+  with BeforeAndAfterAll {
 
   override def beforeAll: Unit = {
     super.beforeAll
-    syncReactiveInflux.database.create()
+    withInflux(_.create())
   }
 
   override def afterAll: Unit = {
-    syncReactiveInflux.database.drop()
+    withInflux(_.drop())
     super.afterAll
   }
 
@@ -42,11 +38,10 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
     rdd.saveToInflux()
 
     // Assert
-    val result = syncReactiveInflux
-      .database
-      .query(Query(s"SELECT * FROM $measurement1"))
+    val result = withInflux(
+      _.query(Query(s"SELECT * FROM $measurement1"))
       .result
-      .single
+      .single)
 
     assert(result.values.size == 1)
 
@@ -57,6 +52,9 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
 }
 
 object PointRDDExtensionsSpec {
+  implicit val params: ReactiveInfluxDbParams = ReactiveInfluxDbParams(dbName = "test")
+  implicit val awaitAtMost: Duration = 1.second
+
   val measurement1: Measurement = "measurement1"
   val point1 = Point(
     time        = new DateTime(1983, 1, 10, 7, 43, 10, 3, DateTimeZone.UTC),
