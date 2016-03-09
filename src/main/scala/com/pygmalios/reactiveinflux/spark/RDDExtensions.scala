@@ -7,12 +7,12 @@ import org.apache.spark.rdd.RDD
 
 import scala.concurrent.duration.Duration
 
-trait RDDExtensions {
+trait RDDExtensions[+T <: PointNoTime] {
   def saveToInflux()(implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
                      awaitAtMost: Duration)
 }
 
 object RDDExtensions {
-  def apply[T <: PointNoTime](rdd: RDD[T]): RDDExtensions =
+  def apply[T <: PointNoTime](rdd: RDD[T]): RDDExtensions[T] =
     new PointRDDExtensions(rdd)
 }

@@ -9,8 +9,10 @@ import org.apache.spark.streaming.dstream.DStream
 import scala.concurrent.duration.Duration
 
 package object spark {
-  implicit def toRDDFunctions[T <: PointNoTime](rdd: RDD[T]): RDDExtensions = RDDExtensions(rdd)
-  implicit def toDStreamFunctions[T](rdd: DStream[T]): DStreamExtensions[T] = DStreamExtensions[T](rdd)
+  implicit def toRDDFunctions[T <: PointNoTime](rdd: RDD[T]): RDDExtensions[T] =
+    RDDExtensions(rdd)
+  implicit def toDStreamFunctions[T <: PointNoTime](dStream: DStream[T]): DStreamExtensions[T] =
+    DStreamExtensions(dStream)
   implicit def withInflux[S](action: (SyncReactiveInfluxDb) => S)
                             (implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
                              awaitAtMost: Duration): S = Utils.withInflux[S](action)
