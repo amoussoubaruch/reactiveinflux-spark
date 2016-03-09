@@ -8,7 +8,7 @@ import org.apache.spark.rdd.RDD
 
 import scala.concurrent.duration.Duration
 
-private[spark] class PointRDDExtensions[T <: PointNoTime](rdd: RDD[T]) extends RDDExtensions {
+private[spark] class PointRDDExtensions[+T <: PointNoTime](rdd: RDD[T]) extends RDDExtensions[T] {
   override def saveToInflux()(implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
                               awaitAtMost: Duration): Unit = {
     // Process each partition separately
