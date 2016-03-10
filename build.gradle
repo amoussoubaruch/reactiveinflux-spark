@@ -12,6 +12,7 @@ buildscript {
 apply plugin: "scala"
 apply plugin: "com.github.maiflai.scalatest"
 apply plugin: "java"
+apply plugin: "maven"
 apply plugin: "maven-publish"
 
 group = group
@@ -28,6 +29,7 @@ repositories {
 configurations {
     itestCompile.extendsFrom testCompile
     itestRuntime.extendsFrom testRuntime
+    deployerJars
 }
 
 sourceSets {
@@ -67,6 +69,8 @@ dependencies {
     testCompile "org.mockito:mockito-all:1.10.19"
     testCompile "junit:junit:4.12"
     testCompile "com.holdenkarau:spark-testing-base_$scalaVersion:1.5.1_0.2.1"
+
+    deployerJars "org.apache.maven.wagon:wagon-webdav:1.0-beta-2"
 }
 
 task sourceJar(type: Jar) {
@@ -80,6 +84,17 @@ publishing {
 
             artifact sourceJar {
                 classifier "sources"
+            }
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: "$System.env.MAVEN_REPO_URL") {
+                authentication(userName: "$System.env.MAVEN_REPO_USERNAME", password: "$System.env.MAVEN_REPO_PASSWORD")
             }
         }
     }
