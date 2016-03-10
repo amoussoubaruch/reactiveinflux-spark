@@ -23,6 +23,20 @@ targetCompatibility = "1.7"
 repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/typesafe/maven-releases/" }
+    maven {
+        credentials {
+            username "$System.env.MAVEN_REPO_USERNAME"
+            password "$System.env.MAVEN_REPO_PASSWORD"
+        }
+        url "$System.env.MAVEN_REPO_RELEASE_URL"
+    }
+    maven {
+        credentials {
+            username "$System.env.MAVEN_REPO_USERNAME"
+            password "$System.env.MAVEN_REPO_PASSWORD"
+        }
+        url "$System.env.MAVEN_REPO_SNAPSHOT_URL"
+    }
     mavenLocal()
 }
 
