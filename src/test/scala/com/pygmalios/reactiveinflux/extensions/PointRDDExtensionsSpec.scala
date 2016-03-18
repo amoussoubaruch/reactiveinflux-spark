@@ -6,6 +6,7 @@ import com.pygmalios.reactiveinflux.command.query.Query
 import com.pygmalios.reactiveinflux.command.write.Point.Measurement
 import com.pygmalios.reactiveinflux.command.write.{BigDecimalFieldValue, Point, StringFieldValue}
 import com.pygmalios.reactiveinflux.spark._
+import com.pygmalios.reactiveinflux.spark.extensions.PointRDDExtensions
 import org.joda.time.{DateTime, DateTimeZone}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -38,6 +39,8 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
     rdd.saveToInflux()
 
     // Assert
+    assert(PointRDDExtensions.totalBatchCount == 1)
+    assert(PointRDDExtensions.totalPointCount == 1)
     val result = withInflux(
       _.query(Query(s"SELECT * FROM $measurement1"))
       .result
@@ -48,6 +51,31 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
     val row = result.values.head
     assert(row.time == point1.time)
     assert(row.items.size == 5)
+  }
+
+  it should "write 1000 points to Influx" in {
+    val points = (1 to 1000).map { i =>
+      Point(
+        time = point1.time.plusMinutes(i),
+        measurement = point1.measurement,
+        tags = point1.tags,
+        fields = point1.fields
+      )
+    }
+    val rdd = sc.parallelize(points)
+
+    // Execute
+    rdd.saveToInflux()
+
+    // Assert
+    assert(PointRDDExtensions.totalBatchCount == 8)
+    assert(PointRDDExtensions.totalPointCount == 1000)
+    val result = withInflux(
+      _.query(Query(s"SELECT * FROM $measurement1"))
+        .result
+        .single)
+
+    assert(result.values.size == 1000)
   }
 }
 
