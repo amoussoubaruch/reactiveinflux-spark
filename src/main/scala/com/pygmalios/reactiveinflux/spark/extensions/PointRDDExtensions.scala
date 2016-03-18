@@ -46,6 +46,7 @@ private[spark] class PointRDDExtensions[+T <: PointNoTime](rdd: RDD[T]) extends 
 object PointRDDExtensions {
   private val log = LoggerFactory.getLogger(classOf[PointRDDExtensions[_]])
 
+  // This makes sense for testing purposes only
   private[reactiveinflux] var totalBatchCount = 0
   private[reactiveinflux] var totalPointCount = 0
 }
