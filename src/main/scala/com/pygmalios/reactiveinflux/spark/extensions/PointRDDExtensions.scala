@@ -36,7 +36,7 @@ private[spark] class PointRDDExtensions[+T <: PointNoTime](rdd: RDD[T]) extends 
         totalBatchCount += batchCount
         totalPointCount += pointCount
 
-        log.debug(s"Partition with $batchCount points written to Influx in $pointCount batches.")
+        log.debug(s"Partition with $pointCount points written to Influx in $batchCount batches.")
       }
     }
     log.info(s"RDD with ${rdd.partitions.size} partitions and $totalPointCount points written to Influx in $totalBatchCount batches.")
