@@ -17,7 +17,7 @@ private[spark] class PointRDDExtensions[+T <: PointNoTime](rdd: RDD[T]) extends 
         val batchSize = ReactiveInfluxSparkConfig(db.config).sparkBatchSize
 
         // Write points in batches
-        partition.sliding(batchSize).foreach { batch =>
+        partition.sliding(batchSize, batchSize).foreach { batch =>
           // Write single batch
           db.write(batch)
         }
