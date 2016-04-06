@@ -50,7 +50,7 @@ public class JavaStreamingExample {
         queue.add(ssc.sparkContext().parallelize(Collections.singletonList(point)));
         JavaDStream<Point> queueStream = ssc.queueStream(queue);
 
-        // Save RDD to Influx
+        // Save DStream to Influx
         sparkInflux.saveToInflux(queueStream);
 
         // Start Spark streaming
