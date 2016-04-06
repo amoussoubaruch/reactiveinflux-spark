@@ -16,7 +16,7 @@
 **SBT:**
 
 ```
-libraryDependencies += "com.pygmalios" % "reactiveinflux" %% "1.4.0.10.0.4"
+libraryDependencies += "com.pygmalios" % "reactiveinflux" %% "1.4.0.10.0.4.1"
 ```
 
 ## Compatibility
