@@ -2,8 +2,10 @@ package com.pygmalios.reactiveinflux.spark.examples
 
 import com.pygmalios.reactiveinflux._
 import com.pygmalios.reactiveinflux.spark._
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
+import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -13,11 +15,11 @@ import scala.concurrent.duration._
   * 1. There exists "application.conf" resource containing Influx URL and other settings.
   * 2. "Example" database exists in Influx.
   */
-object Example extends App {
+object StreamingExample extends App {
   val conf = new SparkConf()
     .setMaster("local[*]")
     .setAppName("Example")
-  val sc = new SparkContext(conf)
+  val ssc = new StreamingContext(conf, Seconds(1))
 
   val point1 = Point(
     time        = DateTime.now(),
@@ -34,12 +36,17 @@ object Example extends App {
   implicit val params = ReactiveInfluxDbName("example")
   implicit val awaitAtMost = 1.second
 
-  // Create RDD with Influx point
-  val rdd: RDD[Point] = sc.parallelize(Seq(point1))
+  // Create DStream of Influx points
+  val queue = new scala.collection.mutable.Queue[RDD[Point]]
+  val queueStream: DStream[Point] = ssc.queueStream(queue)
 
-  // Save RDD to Influx
-  rdd.saveToInflux()
+  // Add single RDD with a single Influx point to the DStream
+  queue.enqueue(ssc.sparkContext.parallelize(Seq(point1)))
 
-  // Stop Spark context
-  sc.stop()
+  // Save DStream to Influx
+  queueStream.saveToInflux()
+
+  // Start Spark streaming
+  ssc.start()
+  ssc.awaitTermination()
 }

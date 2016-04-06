@@ -2,7 +2,7 @@ package com.pygmalios.reactiveinflux.extensions
 
 import com.holdenkarau.spark.testing.StreamingActionBase
 import com.pygmalios.reactiveinflux.spark._
-import com.pygmalios.reactiveinflux.{Point, Query}
+import com.pygmalios.reactiveinflux._
 import org.apache.spark.streaming.dstream.DStream
 import org.junit.runner.RunWith
 import org.scalatest.BeforeAndAfterAll
