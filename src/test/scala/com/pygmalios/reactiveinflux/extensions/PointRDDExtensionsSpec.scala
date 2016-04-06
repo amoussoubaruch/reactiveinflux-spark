@@ -9,22 +9,20 @@ import com.pygmalios.reactiveinflux.spark.extensions.PointRDDExtensions
 import org.joda.time.{DateTime, DateTimeZone}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.{BeforeAndAfterAll, FlatSpec}
+import org.scalatest.{BeforeAndAfter, FlatSpec}
 
 import scala.concurrent.duration._
 
 @RunWith(classOf[JUnitRunner])
 class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
-  with BeforeAndAfterAll {
+  with BeforeAndAfter {
 
-  override def beforeAll: Unit = {
-    super.beforeAll
+  before {
     withInflux(_.create())
   }
 
-  override def afterAll: Unit = {
+  after {
     withInflux(_.drop())
-    super.afterAll
   }
 
   behavior of "saveToInflux"

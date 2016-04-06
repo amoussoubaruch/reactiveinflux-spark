@@ -69,6 +69,10 @@ allprojects {
         }
     }
 
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
+
     dependencies {
         def sparkVersionFull = ""
         if (sparkVersion == "1.4") {
@@ -80,10 +84,12 @@ allprojects {
         compile "org.apache.spark:spark-streaming_$scalaVersion:$sparkVersionFull"
         compile "com.pygmalios:reactiveinflux_$scalaVersion:$reactiveinfluxVersion"
 
-        testCompile "org.scalatest:scalatest_$scalaVersion:2.2.5"
+        testCompile "org.scalatest:scalatest_$scalaVersion:2.2.6"
         testCompile "org.mockito:mockito-all:1.10.19"
         testCompile "junit:junit:4.12"
         testCompile "com.holdenkarau:spark-testing-base_$scalaVersion:1.5.1_0.2.1"
+        testCompile "org.pegdown:pegdown:1.6.0"
+        testCompile "org.ow2.asm:asm-all:4.2"
 
         deployerJars "org.apache.maven.wagon:wagon-webdav:1.0-beta-2"
     }
