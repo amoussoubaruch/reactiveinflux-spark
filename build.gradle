@@ -15,6 +15,7 @@ allprojects {
     apply plugin: "java"
     apply plugin: "maven"
     apply plugin: "maven-publish"
+    apply plugin: "signing"
 
     group = group
     version = "${sparkVersion}.${reactiveinfluxVersion}.${version}"
@@ -101,20 +102,69 @@ project(":examples") {
     }
 }
 
+
+
 task sourceJar(type: Jar) {
-    from sourceSets.main.allScala
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar (type: Jar) {
+    classifier = "javadoc"
+    from javadoc
 }
 
 publishing {
     publications {
         mavenScala(MavenPublication) {
             from components.java
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name "reactiveinflux-spark"
+                    description "Spark support for reactiveinflux."
+                    url "https://github.com/pygmalios/reactiveinflux-spark"
+                    scm {
+                        url "https://github.com/pygmalios/reactiveinflux-spark"
+                        connection "https://github.com/pygmalios/reactiveinflux-spark"
+                        developerConnection "http://buransky.com/"
+                    }
+                    licenses {
+                        license {
+                            name "The Apache Software License, Version 2.0"
+                            url "http://www.apache.org/license/LICENSE-2.0.txt"
+                            distribution "repo"
+                        }
+                    }
+                    developers {
+                        developer {
+                            id "radoburansky"
+                            name "Rado Buransky"
+                            email "rado@buransky.com"
+                        }
+                    }
+                }
+            }
 
-            artifact sourceJar {
-                classifier "sources"
+            artifact (sourceJar) {
+                classifier = "sources"
+            }
+
+            artifact (javadocJar) {
+                classifier = "javadoc"
             }
         }
     }
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+signing {
+    sign configurations.archives
 }
 
 uploadArchives {
@@ -126,6 +176,54 @@ uploadArchives {
             configuration = configurations.deployerJars
             repository(url: "dav:$mavenRepoURL") {
                 authentication(userName: "$System.env.MAVEN_REPO_USERNAME", password: "$System.env.MAVEN_REPO_PASSWORD")
+            }
+        }
+    }
+}
+
+task uploadToSonatype(type: Upload) {
+    configuration = configurations.archives
+    uploadDescriptor = true
+
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name "reactiveinflux-spark"
+                packaging "jar"
+
+                description "Spark support for reactiveinflux."
+                url "https://github.com/pygmalios/reactiveinflux-spark"
+
+                scm {
+                    connection "scm:git:https://github.com/pygmalios/reactiveinflux-spark.git"
+                    developerConnection "scm:git:https://github.com/pygmalios/reactiveinflux-spark.git"
+                    url "https://github.com/pygmalios/reactiveinflux-spark"
+                }
+
+                licenses {
+                    license {
+                        name "The Apache License, Version 2.0"
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id "radoburansky"
+                        name "Rado Buransky"
+                        email "rado@buransky.com"
+                    }
+                }
             }
         }
     }
