@@ -1,11 +1,23 @@
 # reactiveinflux-spark 0.4.1-SNAPSHOT
 
-[Apache Spark](http://spark.apache.org/) support non-blocking [InfluxDB](https://influxdata.com/time-series-platform/influxdb/)
-[driver for Scala and Java](https://github.com/pygmalios/reactiveinflux).
+[Apache Spark](http://spark.apache.org/) support for [reactiveinflux - non-blocking InfluxDB driver for Scala and Java](https://github.com/pygmalios/reactiveinflux).
 
 ## Get it from Maven Central repository
 
-[Maven Central repository](http://mvnrepository.com/artifact/com.pygmalios)
+**Maven:**
+```xml
+<dependency>
+  <groupId>com.pygmalios</groupId>
+  <artifactId>reactiveinflux-spark_2.10</artifactId>
+  <version>1.4.0.10.0.4.1-SNAPSHOT</version>
+</dependency>
+```
+
+**SBT:**
+
+```
+libraryDependencies += "com.pygmalios" % "reactiveinflux" %% "0.10.0.4"
+```
 
 ## Compatibility
 
@@ -249,3 +261,15 @@ public class JavaStreamingExample {
     }
 }
 ```
+
+## Versioning explained
+
+Version number (1.4.0.10.0.4.1-SNAPSHOT) of reactiveinflux-spark consists of four parts:
+
+1. Apache Spark major and minor versions. (1.4)
+2. InfluxDB major and minor versions. (0.10)
+3. Reactiveinflux major and minor versions. (0.4)
+4. Reactiveinflux-spark version. (1-SNAPSHOT)
+
+Additionally Scala 2.11 and 2.10 versions are supported by adding "_2.11" or "_2.10" suffix to
+the artifact name.
