@@ -1,4 +1,4 @@
-# reactiveinflux-spark 0.4.1-SNAPSHOT
+# reactiveinflux-spark 0.4.1
 
 [Apache Spark](http://spark.apache.org/) support for [reactiveinflux - non-blocking InfluxDB driver for Scala and Java](https://github.com/pygmalios/reactiveinflux).
 
@@ -9,7 +9,7 @@
 <dependency>
   <groupId>com.pygmalios</groupId>
   <artifactId>reactiveinflux-spark_2.10</artifactId>
-  <version>1.4.0.10.0.4.1-SNAPSHOT</version>
+  <version>1.4.0.10.0.4.1</version>
 </dependency>
 ```
 
