@@ -1,14 +1,13 @@
 package com.pygmalios.reactiveinflux.spark
 
-import com.pygmalios.reactiveinflux.ReactiveInfluxDbParams
-import com.pygmalios.reactiveinflux.command.write.PointNoTime
 import com.pygmalios.reactiveinflux.spark.extensions.PointRDDExtensions
+import com.pygmalios.reactiveinflux.{PointNoTime, ReactiveInfluxDbName}
 import org.apache.spark.rdd.RDD
 
 import scala.concurrent.duration.Duration
 
 trait RDDExtensions[+T <: PointNoTime] {
-  def saveToInflux()(implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
+  def saveToInflux()(implicit reactiveInfluxDbParams: ReactiveInfluxDbName,
                      awaitAtMost: Duration)
 }
 

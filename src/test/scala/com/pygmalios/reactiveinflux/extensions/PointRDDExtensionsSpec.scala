@@ -1,10 +1,9 @@
 package com.pygmalios.reactiveinflux.extensions
 
 import com.holdenkarau.spark.testing.SharedSparkContext
+import com.pygmalios.reactiveinflux.Point.Measurement
 import com.pygmalios.reactiveinflux._
-import com.pygmalios.reactiveinflux.command.query.Query
-import com.pygmalios.reactiveinflux.command.write.Point.Measurement
-import com.pygmalios.reactiveinflux.command.write.{BigDecimalFieldValue, Point, StringFieldValue}
+import com.pygmalios.reactiveinflux.extensions.PointRDDExtensionsSpec._
 import com.pygmalios.reactiveinflux.spark._
 import com.pygmalios.reactiveinflux.spark.extensions.PointRDDExtensions
 import org.joda.time.{DateTime, DateTimeZone}
@@ -13,7 +12,6 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 
 import scala.concurrent.duration._
-import PointRDDExtensionsSpec._
 
 @RunWith(classOf[JUnitRunner])
 class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
@@ -44,13 +42,13 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
     val result = withInflux(
       _.query(Query(s"SELECT * FROM $measurement1"))
       .result
-      .single)
+      .singleSeries)
 
-    assert(result.values.size == 1)
+    assert(result.rows.size == 1)
 
-    val row = result.values.head
+    val row = result.rows.head
     assert(row.time == point1.time)
-    assert(row.items.size == 5)
+    assert(row.values.size == 5)
   }
 
   it should "write 1000 points to Influx" in {
@@ -73,14 +71,14 @@ class PointRDDExtensionsSpec extends FlatSpec with SharedSparkContext
     val result = withInflux(
       _.query(Query(s"SELECT * FROM $measurement1"))
         .result
-        .single)
+        .singleSeries)
 
-    assert(result.values.size == 1000)
+    assert(result.rows.size == 1000)
   }
 }
 
 object PointRDDExtensionsSpec {
-  implicit val params: ReactiveInfluxDbParams = ReactiveInfluxDbParams(dbName = "test")
+  implicit val params: ReactiveInfluxDbName = ReactiveInfluxDbName("test")
   implicit val awaitAtMost: Duration = 1.second
 
   val measurement1: Measurement = "measurement1"

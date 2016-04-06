@@ -1,1 +1,3 @@
 rootProject.name = "reactiveinflux-spark_${scalaVersion}"
+
+include "examples"

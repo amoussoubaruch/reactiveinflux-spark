@@ -1,9 +1,8 @@
 package com.pygmalios.reactiveinflux.extensions
 
 import com.holdenkarau.spark.testing.StreamingActionBase
-import com.pygmalios.reactiveinflux.command.query.Query
-import com.pygmalios.reactiveinflux.command.write.Point
 import com.pygmalios.reactiveinflux.spark._
+import com.pygmalios.reactiveinflux.{Point, Query}
 import org.apache.spark.streaming.dstream.DStream
 import org.junit.runner.RunWith
 import org.scalatest.BeforeAndAfterAll
@@ -32,14 +31,12 @@ class PointDStreamExtensionsSpec extends StreamingActionBase
 
     // Assert
     val result = withInflux(
-      _.query(Query(s"SELECT * FROM $measurement1"))
-        .result
-        .single)
+      _.query(Query(s"SELECT * FROM $measurement1")).result.singleSeries)
 
-    assert(result.values.size == 1)
+    assert(result.rows.size == 1)
 
-    val row = result.values.head
+    val row = result.rows.head
     assert(row.time == point1.time)
-    assert(row.items.size == 5)
+    assert(row.values.size == 5)
   }
 }

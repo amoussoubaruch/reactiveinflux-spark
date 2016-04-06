@@ -1,9 +1,8 @@
 package com.pygmalios.reactiveinflux.spark.extensions
 
-import com.pygmalios.reactiveinflux.ReactiveInfluxDbParams
-import com.pygmalios.reactiveinflux.command.write.PointNoTime
 import com.pygmalios.reactiveinflux.spark.config.ReactiveInfluxSparkConfig
 import com.pygmalios.reactiveinflux.spark.{RDDExtensions, _}
+import com.pygmalios.reactiveinflux.{PointNoTime, ReactiveInfluxDbName}
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
 
@@ -12,7 +11,7 @@ import scala.concurrent.duration.Duration
 private[spark] class PointRDDExtensions[+T <: PointNoTime](rdd: RDD[T]) extends RDDExtensions[T] {
   import PointRDDExtensions._
 
-  override def saveToInflux()(implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
+  override def saveToInflux()(implicit reactiveInfluxDbName: ReactiveInfluxDbName,
                               awaitAtMost: Duration): Unit = {
     // Process each partition separately
     totalBatchCount = 0

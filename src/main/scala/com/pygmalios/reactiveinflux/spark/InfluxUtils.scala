@@ -1,6 +1,6 @@
 package com.pygmalios.reactiveinflux.spark
 
-import com.pygmalios.reactiveinflux.ReactiveInfluxDbParams
+import com.pygmalios.reactiveinflux.ReactiveInfluxDbName
 import com.pygmalios.reactiveinflux.sync.SyncReactiveInfluxDb
 
 import scala.concurrent.duration.Duration
@@ -10,6 +10,6 @@ import scala.concurrent.duration.Duration
   */
 trait InfluxUtils {
   implicit def withInflux[S](action: (SyncReactiveInfluxDb) => S)
-                            (implicit reactiveInfluxDbParams: ReactiveInfluxDbParams,
+                            (implicit reactiveInfluxDbParams: ReactiveInfluxDbName,
                              awaitAtMost: Duration): S
 }
