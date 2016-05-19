@@ -82,14 +82,6 @@ allprojects {
     }
 }
 
-project(":examples") {
-    dependencies {
-        compile rootProject
-    }
-}
-
-
-
 task sourceJar(type: Jar) {
     classifier = "sources"
     from sourceSets.main.allSource
